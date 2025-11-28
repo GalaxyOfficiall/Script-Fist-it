@@ -1421,7 +1421,7 @@ local SettingsTab = AllMenu:Tab({
 
 local OtherTab = AllMenu:Tab({
     Title = "Other",
-    Icon = "cog"
+    Icon = "menu-burger"
 })
 
 -------------------------------------------
@@ -5515,3 +5515,4 @@ HookTab:Section({
     TextXAlignment = "Center",
     Opened = true
 })
+

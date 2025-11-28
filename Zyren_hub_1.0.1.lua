@@ -1419,321 +1419,365 @@ local SettingsTab = AllMenu:Tab({
     Icon = "cog"
 })
 
+-------------------------------------------
+----- =======[ OTHER TAB ]
+-------------------------------------------
+
 local OtherTab = AllMenu:Tab({
     Title = "Other",
-    Icon = "menu-burger"
+    Icon = "square-plus"
 })
-
--- Simple Coordinate Display System
-local CoordinateGUI = Instance.new("ScreenGui")
-CoordinateGUI.Name = "CoordinateGUI"
-CoordinateGUI.Parent = game:GetService("CoreGui")
-CoordinateGUI.ResetOnSpawn = false
-CoordinateGUI.Enabled = false
-
--- Main Frame
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 300, 0, 180)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-MainFrame.BorderSizePixel = 0
-MainFrame.BackgroundTransparency = 0.1
-MainFrame.Parent = CoordinateGUI
-
--- Title Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 30)
-TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-TitleBar.BorderSizePixel = 0
-TitleBar.Parent = MainFrame
-
-local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -60, 1, 0)
-TitleText.Position = UDim2.new(0, 10, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.Text = "Coordinate Display"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextSize = 14
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
-TitleText.Font = Enum.Font.GothamBold
-TitleText.Parent = TitleBar
-
--- Close Button
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -30, 0, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
-CloseButton.BorderSizePixel = 0
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.TextSize = 14
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.Parent = TitleBar
-
--- Content
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(1, -20, 1, -50)
-ContentFrame.Position = UDim2.new(0, 10, 0, 40)
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.Parent = MainFrame
-
--- Position Display
-local PositionText = Instance.new("TextLabel")
-PositionText.Size = UDim2.new(1, 0, 0, 40)
-PositionText.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-PositionText.BorderSizePixel = 0
-PositionText.Text = "Position: Loading..."
-PositionText.TextColor3 = Color3.fromRGB(255, 255, 255)
-PositionText.TextSize = 12
-PositionText.Font = Enum.Font.Gotham
-PositionText.Parent = ContentFrame
-
--- CFrame Display
-local CFrameText = Instance.new("TextLabel")
-CFrameText.Size = UDim2.new(1, 0, 0, 60)
-CFrameText.Position = UDim2.new(0, 0, 0, 50)
-CFrameText.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-CFrameText.BorderSizePixel = 0
-CFrameText.Text = "CFrame: Loading..."
-CFrameText.TextColor3 = Color3.fromRGB(255, 255, 255)
-CFrameText.TextSize = 10
-CFrameText.TextWrapped = true
-CFrameText.Font = Enum.Font.Gotham
-CFrameText.Parent = ContentFrame
-
--- Copy Buttons
-local CopyPositionButton = Instance.new("TextButton")
-CopyPositionButton.Size = UDim2.new(0.45, 0, 0, 25)
-CopyPositionButton.Position = UDim2.new(0, 0, 1, -30)
-CopyPositionButton.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
-CopyPositionButton.BorderSizePixel = 0
-CopyPositionButton.Text = "Copy Position"
-CopyPositionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CopyPositionButton.TextSize = 12
-CopyPositionButton.Font = Enum.Font.Gotham
-CopyPositionButton.Parent = ContentFrame
-
-local CopyCFrameButton = Instance.new("TextButton")
-CopyCFrameButton.Size = UDim2.new(0.45, 0, 0, 25)
-CopyCFrameButton.Position = UDim2.new(0.55, 0, 1, -30)
-CopyCFrameButton.BackgroundColor3 = Color3.fromRGB(70, 130, 200)
-CopyCFrameButton.BorderSizePixel = 0
-CopyCFrameButton.Text = "Copy CFrame"
-CopyCFrameButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CopyCFrameButton.TextSize = 12
-CopyCFrameButton.Font = Enum.Font.Gotham
-CopyCFrameButton.Parent = ContentFrame
-
--- Simple Functions
-local function UpdateCoordinates()
-    if not CoordinateGUI.Enabled then return end
-    
-    local character = LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local hrp = character.HumanoidRootPart
-        local pos = hrp.Position
-        local cf = hrp.CFrame
-        
-        PositionText.Text = string.format("Position:\nX: %.1f, Y: %.1f, Z: %.1f", pos.X, pos.Y, pos.Z)
-        CFrameText.Text = string.format("CFrame:\nnew(%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
-    else
-        PositionText.Text = "Position: No character"
-        CFrameText.Text = "CFrame: No character"
-    end
-end
-
-local function CopyToClipboard(text)
-    if setclipboard then
-        setclipboard(text)
-        WindUI:Notify({
-            Title = "Copied!",
-            Content = "Text copied to clipboard",
-            Duration = 2,
-            Icon = "copy"
-        })
-    else
-        WindUI:Notify({
-            Title = "Error",
-            Content = "Clipboard not supported",
-            Duration = 3,
-            Icon = "x-circle"
-        })
-    end
-end
-
--- Drag Function
-local dragging = false
-local dragInput, dragStart, startPos
-
-TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-    end
-end)
-
-TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
--- Button Events
-CloseButton.MouseButton1Click:Connect(function()
-    CoordinateGUI.Enabled = false
-end)
-
-CopyPositionButton.MouseButton1Click:Connect(function()
-    local character = LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local pos = character.HumanoidRootPart.Position
-        local text = string.format("Vector3.new(%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
-        CopyToClipboard(text)
-    end
-end)
-
-CopyCFrameButton.MouseButton1Click:Connect(function()
-    local character = LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local pos = character.HumanoidRootPart.Position
-        local text = string.format("CFrame.new(%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
-        CopyToClipboard(text)
-    end
-end)
-
--- Auto Update
-game:GetService("RunService").RenderStepped:Connect(UpdateCoordinates)
-
--------------------------------------------
------ =======[ OTHER TAB CONTENT ]
--------------------------------------------
 
 OtherTab:Section({
     Title = "Coordinate Tools",
-    TextSize = 16,
-    TextXAlignment = "Center"
+    TextSize = 22,
+    TextXAlignment = "Center",
+    Opened = true
 })
 
-OtherTab:Toggle({
-    Title = "Show Coordinate Display",
-    Desc = "Show real-time position window",
-    Value = false,
-    Callback = function(state)
-        CoordinateGUI.Enabled = state
-        if state then
-            WindUI:Notify({
-                Title = "Coordinate Display",
-                Content = "Window enabled! Drag to move.",
-                Duration = 3,
-                Icon = "map-pin"
-            })
+-- Variable untuk GUI Coordinate
+local CoordinateGUI = nil
+local isDragging = false
+local dragStart = nil
+local startPos = nil
+local updateConnection = nil
+
+-- Fungsi untuk membuat Coordinate GUI
+local function CreateCoordinateGUI()
+    if CoordinateGUI then
+        CoordinateGUI:Destroy()
+        if updateConnection then
+            updateConnection:Disconnect()
+            updateConnection = nil
         end
     end
-})
-
-OtherTab:Button({
-    Title = "Copy Current Position",
-    Desc = "Copy Vector3 to clipboard",
-    Callback = function()
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            local pos = character.HumanoidRootPart.Position
-            local text = string.format("Vector3.new(%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
-            CopyToClipboard(text)
-        else
-            WindUI:Notify({
-                Title = "Error",
-                Content = "Character not found!",
-                Duration = 3,
-                Icon = "x-circle"
-            })
+    
+    -- Create ScreenGui
+    CoordinateGUI = Instance.new("ScreenGui")
+    CoordinateGUI.Name = "CoordinateViewer"
+    CoordinateGUI.ResetOnSpawn = false
+    CoordinateGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    CoordinateGUI.Parent = game:GetService("CoreGui")
+    
+    -- Main Frame (Draggable)
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Name = "MainFrame"
+    MainFrame.Size = UDim2.new(0, 400, 0, 280)
+    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -140)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Active = true
+    MainFrame.Parent = CoordinateGUI
+    
+    -- Add UICorner
+    local MainCorner = Instance.new("UICorner")
+    MainCorner.CornerRadius = UDim.new(0, 12)
+    MainCorner.Parent = MainFrame
+    
+    -- Add UIStroke
+    local MainStroke = Instance.new("UIStroke")
+    MainStroke.Color = Color3.fromRGB(100, 100, 255)
+    MainStroke.Thickness = 2
+    MainStroke.Parent = MainFrame
+    
+    -- Header
+    local Header = Instance.new("Frame")
+    Header.Name = "Header"
+    Header.Size = UDim2.new(1, 0, 0, 40)
+    Header.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    Header.BorderSizePixel = 0
+    Header.Parent = MainFrame
+    
+    local HeaderCorner = Instance.new("UICorner")
+    HeaderCorner.CornerRadius = UDim.new(0, 12)
+    HeaderCorner.Parent = Header
+    
+    -- Fix corner bottom
+    local HeaderFix = Instance.new("Frame")
+    HeaderFix.Size = UDim2.new(1, 0, 0, 12)
+    HeaderFix.Position = UDim2.new(0, 0, 1, -12)
+    HeaderFix.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    HeaderFix.BorderSizePixel = 0
+    HeaderFix.Parent = Header
+    
+    -- Title
+    local Title = Instance.new("TextLabel")
+    Title.Name = "Title"
+    Title.Size = UDim2.new(1, -50, 1, 0)
+    Title.Position = UDim2.new(0, 15, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = "📍 Coordinate Viewer"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 16
+    Title.Font = Enum.Font.GothamBold
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Header
+    
+    -- Close Button
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Name = "CloseButton"
+    CloseButton.Size = UDim2.new(0, 30, 0, 30)
+    CloseButton.Position = UDim2.new(1, -40, 0, 5)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    CloseButton.Text = "✕"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextSize = 18
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.BorderSizePixel = 0
+    CloseButton.Parent = Header
+    
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0, 8)
+    CloseCorner.Parent = CloseButton
+    
+    -- Content Frame
+    local Content = Instance.new("Frame")
+    Content.Name = "Content"
+    Content.Size = UDim2.new(1, -20, 1, -60)
+    Content.Position = UDim2.new(0, 10, 0, 50)
+    Content.BackgroundTransparency = 1
+    Content.Parent = MainFrame
+    
+    -- Position Label
+    local PosLabel = Instance.new("TextLabel")
+    PosLabel.Name = "PosLabel"
+    PosLabel.Size = UDim2.new(1, 0, 0, 25)
+    PosLabel.Position = UDim2.new(0, 0, 0, 5)
+    PosLabel.BackgroundTransparency = 1
+    PosLabel.Text = "Position (X, Y, Z):"
+    PosLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    PosLabel.TextSize = 14
+    PosLabel.Font = Enum.Font.GothamMedium
+    PosLabel.TextXAlignment = Enum.TextXAlignment.Left
+    PosLabel.Parent = Content
+    
+    -- Position Value
+    local PosValue = Instance.new("TextBox")
+    PosValue.Name = "PosValue"
+    PosValue.Size = UDim2.new(1, 0, 0, 35)
+    PosValue.Position = UDim2.new(0, 0, 0, 30)
+    PosValue.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    PosValue.Text = "0, 0, 0"
+    PosValue.TextColor3 = Color3.fromRGB(100, 200, 255)
+    PosValue.TextSize = 13
+    PosValue.Font = Enum.Font.Code
+    PosValue.ClearTextOnFocus = false
+    PosValue.TextEditable = false
+    PosValue.BorderSizePixel = 0
+    PosValue.Parent = Content
+    
+    local PosCorner = Instance.new("UICorner")
+    PosCorner.CornerRadius = UDim.new(0, 8)
+    PosCorner.Parent = PosValue
+    
+    -- Copy Position Button
+    local CopyPosBtn = Instance.new("TextButton")
+    CopyPosBtn.Name = "CopyPosBtn"
+    CopyPosBtn.Size = UDim2.new(1, 0, 0, 30)
+    CopyPosBtn.Position = UDim2.new(0, 0, 0, 70)
+    CopyPosBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+    CopyPosBtn.Text = "📋 Copy Position"
+    CopyPosBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CopyPosBtn.TextSize = 13
+    CopyPosBtn.Font = Enum.Font.GothamBold
+    CopyPosBtn.BorderSizePixel = 0
+    CopyPosBtn.Parent = Content
+    
+    local CopyPosBtnCorner = Instance.new("UICorner")
+    CopyPosBtnCorner.CornerRadius = UDim.new(0, 8)
+    CopyPosBtnCorner.Parent = CopyPosBtn
+    
+    -- CFrame Label
+    local CFrameLabel = Instance.new("TextLabel")
+    CFrameLabel.Name = "CFrameLabel"
+    CFrameLabel.Size = UDim2.new(1, 0, 0, 25)
+    CFrameLabel.Position = UDim2.new(0, 0, 0, 110)
+    CFrameLabel.BackgroundTransparency = 1
+    CFrameLabel.Text = "CFrame:"
+    CFrameLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    CFrameLabel.TextSize = 14
+    CFrameLabel.Font = Enum.Font.GothamMedium
+    CFrameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    CFrameLabel.Parent = Content
+    
+    -- CFrame Value
+    local CFrameValue = Instance.new("TextBox")
+    CFrameValue.Name = "CFrameValue"
+    CFrameValue.Size = UDim2.new(1, 0, 0, 35)
+    CFrameValue.Position = UDim2.new(0, 0, 0, 135)
+    CFrameValue.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    CFrameValue.Text = "CFrame.new(0, 0, 0)"
+    CFrameValue.TextColor3 = Color3.fromRGB(255, 150, 100)
+    CFrameValue.TextSize = 12
+    CFrameValue.Font = Enum.Font.Code
+    CFrameValue.ClearTextOnFocus = false
+    CFrameValue.TextEditable = false
+    CFrameValue.BorderSizePixel = 0
+    CFrameValue.Parent = Content
+    
+    local CFrameCorner = Instance.new("UICorner")
+    CFrameCorner.CornerRadius = UDim.new(0, 8)
+    CFrameCorner.Parent = CFrameValue
+    
+    -- Copy CFrame Button
+    local CopyCFrameBtn = Instance.new("TextButton")
+    CopyCFrameBtn.Name = "CopyCFrameBtn"
+    CopyCFrameBtn.Size = UDim2.new(1, 0, 0, 30)
+    CopyCFrameBtn.Position = UDim2.new(0, 0, 0, 175)
+    CopyCFrameBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 50)
+    CopyCFrameBtn.Text = "📋 Copy CFrame"
+    CopyCFrameBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CopyCFrameBtn.TextSize = 13
+    CopyCFrameBtn.Font = Enum.Font.GothamBold
+    CopyCFrameBtn.BorderSizePixel = 0
+    CopyCFrameBtn.Parent = Content
+    
+    local CopyCFrameBtnCorner = Instance.new("UICorner")
+    CopyCFrameBtnCorner.CornerRadius = UDim.new(0, 8)
+    CopyCFrameBtnCorner.Parent = CopyCFrameBtn
+    
+    -- =============================================
+    -- FUNCTIONALITY
+    -- =============================================
+    
+    -- Update Coordinates
+    local function UpdateCoordinates()
+        local char = workspace:FindFirstChild("Characters"):FindFirstChild(LocalPlayer.Name)
+        if char then
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local pos = hrp.Position
+                local cf = hrp.CFrame
+                
+                -- Format Position
+                PosValue.Text = string.format("%.2f, %.2f, %.2f", pos.X, pos.Y, pos.Z)
+                
+                -- Format CFrame
+                local x, y, z = cf.X, cf.Y, cf.Z
+                local r00, r01, r02, r10, r11, r12, r20, r21, r22 = cf:GetComponents()
+                CFrameValue.Text = string.format(
+                    "CFrame.new(%.2f, %.2f, %.2f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f)",
+                    x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22
+                )
+            end
         end
     end
-})
-
-OtherTab:Button({
-    Title = "Copy Current CFrame", 
-    Desc = "Copy CFrame to clipboard",
-    Callback = function()
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            local pos = character.HumanoidRootPart.Position
-            local text = string.format("CFrame.new(%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
-            CopyToClipboard(text)
+    
+    -- Copy to Clipboard Function
+    local function CopyToClipboard(text)
+        if setclipboard then
+            setclipboard(text)
+            NotifySuccess("Copied!", "Copied to clipboard successfully")
         else
-            WindUI:Notify({
-                Title = "Error",
-                Content = "Character not found!",
-                Duration = 3,
-                Icon = "x-circle"
-            })
+            NotifyError("Error", "Clipboard not supported on this executor")
         end
+    end
+    
+    -- Button Hover Effects
+    local function AddHoverEffect(button, normalColor, hoverColor)
+        button.MouseEnter:Connect(function()
+            button.BackgroundColor3 = hoverColor
+        end)
+        
+        button.MouseLeave:Connect(function()
+            button.BackgroundColor3 = normalColor
+        end)
+    end
+    
+    AddHoverEffect(CopyPosBtn, Color3.fromRGB(50, 150, 255), Color3.fromRGB(70, 170, 255))
+    AddHoverEffect(CopyCFrameBtn, Color3.fromRGB(255, 100, 50), Color3.fromRGB(255, 120, 70))
+    AddHoverEffect(CloseButton, Color3.fromRGB(255, 50, 50), Color3.fromRGB(255, 80, 80))
+    
+    -- Copy Button Actions
+    CopyPosBtn.MouseButton1Click:Connect(function()
+        CopyToClipboard(PosValue.Text)
+    end)
+    
+    CopyCFrameBtn.MouseButton1Click:Connect(function()
+        CopyToClipboard(CFrameValue.Text)
+    end)
+    
+    -- Close Button
+    CloseButton.MouseButton1Click:Connect(function()
+        if CoordinateGUI then
+            CoordinateGUI:Destroy()
+            CoordinateGUI = nil
+        end
+        if updateConnection then
+            updateConnection:Disconnect()
+            updateConnection = nil
+        end
+        NotifyInfo("Coordinate Viewer", "Closed successfully")
+    end)
+    
+    -- Dragging System
+    Header.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            isDragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    isDragging = false
+                end
+            end)
+        end
+    end)
+    
+    Header.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            if isDragging then
+                local delta = input.Position - dragStart
+                MainFrame.Position = UDim2.new(
+                    startPos.X.Scale,
+                    startPos.X.Offset + delta.X,
+                    startPos.Y.Scale,
+                    startPos.Y.Offset + delta.Y
+                )
+            end
+        end
+    end)
+    
+    -- Start updating coordinates
+    UpdateCoordinates()
+    updateConnection = RunService.RenderStepped:Connect(UpdateCoordinates)
+    
+    NotifySuccess("Coordinate Viewer", "GUI opened successfully!")
+end
+
+-- Button to open Coordinate Viewer
+OtherTab:Button({
+    Title = "📍 Open Coordinate Viewer",
+    Desc = "Show a draggable GUI with real-time coordinates",
+    Justify = "Center",
+    Icon = "map-pin",
+    Callback = function()
+        CreateCoordinateGUI()
     end
 })
 
 OtherTab:Space()
 
-OtherTab:Section({
-    Title = "Teleport Tools",
-    TextSize = 16,
-    TextXAlignment = "Center"
+OtherTab:Paragraph({
+    Title = "ℹ️ How to Use",
+    Desc = [[
+- Click the button above to open the Coordinate Viewer
+- The GUI shows your real-time Position and CFrame
+- Click "Copy Position" or "Copy CFrame" to copy to clipboard
+- Drag the header to move the GUI
+- Click the ✕ button to close
+
+Perfect for saving locations or creating teleport scripts!
+]],
+    Color = "Blue"
 })
 
-local XInput = OtherTab:Input({
-    Title = "X Position",
-    Placeholder = "0",
-    Value = "0"
-})
+print("✅ Other Tab with Coordinate Viewer Loaded!")
 
-local YInput = OtherTab:Input({
-    Title = "Y Position", 
-    Placeholder = "0",
-    Value = "0"
-})
-
-local ZInput = OtherTab:Input({
-    Title = "Z Position",
-    Placeholder = "0", 
-    Value = "0"
-})
-
-OtherTab:Button({
-    Title = "Teleport to Coordinates",
-    Desc = "Teleport to X, Y, Z position",
-    Callback = function()
-        local x = tonumber(XInput:Get()) or 0
-        local y = tonumber(YInput:Get()) or 0
-        local z = tonumber(ZInput:Get()) or 0
-        
-        local character = LocalPlayer.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            character.HumanoidRootPart.CFrame = CFrame.new(x, y, z)
-            WindUI:Notify({
-                Title = "Teleported!",
-                Content = string.format("Position: %.1f, %.1f, %.1f", x, y, z),
-                Duration = 3,
-                Icon = "check-circle"
-            })
-        else
-            WindUI:Notify({
-                Title = "Error",
-                Content = "Character not found!",
-                Duration = 3,
-                Icon = "x-circle"
-            })
-        end
-    end
-})
-
-print("✅ Other Tab with Menu Burger Icon Loaded Successfully!")
+-------------------------------------------
+----- =======[ END OTHER TAB ]
+-------------------------------------------
 
 -------------------------------------------
 ----- =======[ AUTO FISH TAB ]
